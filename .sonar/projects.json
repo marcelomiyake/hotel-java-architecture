@@ -1,0 +1,23 @@
+{
+  "policy": "Use a Sonar project for each real component; retain existing aggregate history.",
+  "projects": [
+    {
+      "component": "catalog-service",
+      "directory": "services/catalog-service",
+      "key": "marcelomiyake_hotel-java-architecture_catalog-service",
+      "kind": "java"
+    },
+    {
+      "component": "reservation-service",
+      "directory": "services/reservation-service",
+      "key": "marcelomiyake_hotel-java-architecture_reservation-service",
+      "kind": "java"
+    },
+    {
+      "component": "web",
+      "directory": "web",
+      "key": "marcelomiyake_hotel-java-architecture_web",
+      "kind": "web"
+    }
+  ]
+}
