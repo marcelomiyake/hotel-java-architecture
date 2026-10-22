@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   analyze:
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+      }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -33,8 +34,12 @@ jobs:
         mvn -B -f services/pom.xml -Dmaven.repo.local="$RUNNER_TEMP/maven-repository" verify
         cd web
         npm ci
-        npm run test -- --coverage
         cd "$GITHUB_WORKSPACE"
+    - name: Generate frontend coverage
+      id: frontend_coverage
+      continue-on-error: true
+      working-directory: web
+      run: npm run test -- --coverage
     - name: Analyze Repository aggregate
       if: ${{ !cancelled() && steps.prepare.outcome == 'success' }}
       uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9
@@ -70,3 +75,8 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io
+    - name: Report frontend test failures
+      if: ${{ !cancelled() && steps.frontend_coverage.outcome == 'failure' }}
+      run: |-
+        echo "::error::Frontend tests failed; SonarCloud analysis still ran with the available reports."
+        exit 1
