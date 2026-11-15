@@ -1,7 +1,15 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { HotelCard, HotelDetails, RoomAvailability } from "../../src/domain/hotel";
 import type { HotelReadPort, ReservationReadPort } from "../../src/application/ports";
 import { FindAvailableRoomsQuery, GetHotelDetailsQuery, SearchHotelsQuery } from "../../src/application/hotel-queries";
+
+
+// Fixtures use fixed stay dates; pin "today" so date validation stays deterministic.
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-09-28T12:00:00"));
+});
+afterEach(() => vi.useRealTimers());
 
 const hotel: HotelCard = {
   id: "rio-casa-do-mar", name: "Casa do Mar", city: "Rio de Janeiro", country: "Brazil",
